@@ -22,5 +22,5 @@ class Calendariser:
             for c in calendars:
                 print("    Name: %-20s  URL: %s" % (c.name, c.url))
 
-    def add_to_calendar():
+    def add_to_calendar(self):
         pass
