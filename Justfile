@@ -1,5 +1,5 @@
 install-dev:
-	pip install --editable .
+	pip install --editable .[dev]
 
 check-types:
 	mypy seqmail

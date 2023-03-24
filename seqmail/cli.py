@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-import click
-
-from . import settings
+import os
 import shutil
 import subprocess
-import os
-from . import ui
+
+import click
+
+from . import settings, ui
 
 
 @click.group(invoke_without_command=True)

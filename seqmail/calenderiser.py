@@ -13,7 +13,7 @@ class OAuth(AuthBase):
 
 class Calendariser:
     def __init__(self, url: str, username: str, password: str):
-        client = caldav.DAVClient(url=url, auth=OAuth(credentials))
+        client = caldav.DAVClient(url=url, auth=OAuth((username, password)))
 
         principal = client.principal()
         calendars = principal.calendars()

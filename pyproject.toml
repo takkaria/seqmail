@@ -1,2 +1,7 @@
 [tool.mypy]
 python_version = 3.11
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+select = ["E", "W", "F", "C90", "I", "UP", "N", "YTT", "S", "BLE", "FBT", "B", "A", "C4", "T10", "ISC", "ICN", "PT", "Q", "SIM", "TID", "ARG", "DTZ", "PD", "PGH", "PLE", "PLR", "PLW", "PIE", "RUF"]

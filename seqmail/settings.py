@@ -1,7 +1,8 @@
-from dataclasses import dataclass
 import tomllib
-from xdg_base_dirs import xdg_config_home
+from dataclasses import dataclass
+
 import typedload
+from xdg_base_dirs import xdg_config_home
 
 SETTINGS_PATH = xdg_config_home() / "seqmail.toml"
 

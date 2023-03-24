@@ -1,4 +1,5 @@
 import json
+
 import requests
 
 
@@ -7,9 +8,6 @@ class JMAPClient:
 
     def __init__(self, hostname, token):
         """Initialize using a hostname, username and password"""
-        assert len(hostname) > 0
-        assert len(token) > 0
-
         self.hostname = hostname
         self.token = token
         self.session = None
@@ -25,6 +23,7 @@ class JMAPClient:
         r = requests.get(
             "https://" + self.hostname + "/.well-known/jmap",
             headers={"Authorization": f"Bearer {self.token}"},
+            timeout=5,
         )
         r.raise_for_status()
         self.session = session = r.json()
@@ -55,6 +54,7 @@ class JMAPClient:
                 "Content-Type": "application/json",
             },
             data=json.dumps(call),
+            timeout=5,
         )
         res.raise_for_status()
         return res.json()
@@ -102,7 +102,7 @@ class JMAPClient:
             }
         )
         if response["methodResponses"][0][0] == "error":
-            breakpoint()
+            raise ValueError("Couldn't move message")
 
     def get_emails(self, mailbox_id):
         return self.call(
