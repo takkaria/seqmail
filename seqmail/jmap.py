@@ -56,10 +56,10 @@ class JMAPClient:
         self.token = token
         self.session = None
         self.api_url = None
-        self.account_id = None
+        self.account_id: str | None = None
         self.mailboxes: list[Mailbox] | None = None
 
-    def get_session(self):
+    def get_session(self) -> Any:
         """Return the JMAP Session Resource as a Python dict"""
         if self.session:
             return self.session
@@ -71,7 +71,10 @@ class JMAPClient:
         )
         r.raise_for_status()
         self.session = r.json()
-        self.api_url = self.session["apiUrl"]
+        if isinstance(self.session, dict) and "apiUrl" in self.session:
+            self.api_url = self.session["apiUrl"]
+        else:
+            raise ValueError("No API URL provided in session")
         return self.session
 
     def get_account_id(self) -> str:
@@ -82,10 +85,12 @@ class JMAPClient:
         session = self.get_session()
 
         account_id = session["primaryAccounts"]["urn:ietf:params:jmap:mail"]
+        if not isinstance(account_id, str):
+            raise ValueError("No account ID in session")
         self.account_id = account_id
         return account_id
 
-    def call(self, call) -> Any:
+    def call(self, call: Any) -> Any:
         if not self.api_url:
             raise ValueError("No session defined")
 

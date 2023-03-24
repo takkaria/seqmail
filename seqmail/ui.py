@@ -42,7 +42,7 @@ def _choose_action(email: jmap.Email) -> ActionTypes | None:
     if index is None:
         return None
     else:
-        return actions[index]
+        return actions[index] or None
 
 
 def _display_name(mailbox: jmap.Mailbox) -> str:
@@ -71,17 +71,19 @@ def _choose_mailbox(client: jmap.JMAPClient) -> str | None:
         return None
     else:
         print(mailboxes[index].name)
-        return mailboxes[index].id
+        return mailboxes[index].id or None
 
 
 def _make_url(id_: str, thread_id: str) -> str:
     return f"https://www.fastmail.com/mail/Inbox/{thread_id}.{id_}"
 
 
-def _display_email(email: jmap.Email) -> None:
-    def _grey(text: str) -> str:
-        return color(text, fg=242)
+def _grey(text: str) -> str:
+    result: str = color(text, fg=242)
+    return result
 
+
+def _display_email(email: jmap.Email) -> None:
     from_ = f"{email.addr_from[0].name} <{email.addr_from[0].email}>"
     email_url = _make_url(id_=email.id, thread_id=email.thread_id)
 
