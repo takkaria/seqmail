@@ -118,7 +118,7 @@ def choose_action_for_email(email: dict, jmap: JMAPClient):  # noqa: C901
             else:
                 # TODO(anna): doesn't work!
                 todoist = TodoistAPI(SETTINGS.todoist.key)
-                email_url = _make_url(id=email["id"], thread_id=email["threadId"])
+                email_url = _make_url(id_=email["id"], thread_id=email["threadId"])
                 todoist.quick.add(text=text, note=email_url)
                 todoist.commit()
         elif selected is Action.SKIP:
