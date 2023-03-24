@@ -6,7 +6,6 @@ setup(
     py_modules=["seqmail"],
     install_requires=[
         "requests",
-        "todoist-python",
         "simple-term-menu",
         "ansicolors",
         "xdg-base-dirs",

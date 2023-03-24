@@ -6,9 +6,8 @@ from typing import NamedTuple
 
 from colors import color
 from simple_term_menu import TerminalMenu
-from todoist import TodoistAPI
 
-from . import jmap
+from . import jmap, todoist
 from .settings import SETTINGS
 
 
@@ -106,11 +105,8 @@ class AddTodo:
     text: str
 
     def run(self, _client: jmap.JMAPClient, email: jmap.Email) -> None:
-        # TODO(anna): doesn't work!
-        todoist = TodoistAPI(SETTINGS.todoist.key)
         email_url = _make_url(id_=email.id, thread_id=email.thread_id)
-        todoist.quick.add(text=self.text, note=email_url)
-        todoist.commit()
+        todoist.add_todo(text=self.text, note=email_url)
 
 
 class Skip:
