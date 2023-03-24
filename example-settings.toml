@@ -1,0 +1,6 @@
+[todoist]
+token = "<token>"
+
+[jmap]
+hostname = "api.fastmail.com"
+token = "<token>"

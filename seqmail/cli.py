@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+import click
+
+from . import settings
+import shutil
+import subprocess
+import os
+from . import ui
+
+
+@click.group(invoke_without_command=True)
+@click.pass_context
+def cli(ctx):
+    if ctx.invoked_subcommand is None:
+        run()
+
+
+@cli.command()
+def setup():
+    editor = os.environ.get("EDITOR", "nano")
+
+    if not settings.SETTINGS_PATH.exists():
+        shutil.copy("./example-settings.toml", settings.SETTINGS_PATH)
+
+    subprocess.call([editor, settings.SETTINGS_PATH])
+
+
+@cli.command()
+def run():
+    ui.run()
