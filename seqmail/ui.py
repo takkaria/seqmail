@@ -25,7 +25,7 @@ class Action(Enum):
 
 
 class MainMenu:
-    def __init__(self, email: dict):
+    def __init__(self, email: dict) -> None:
         self.actions = self.actions_for_email(email)
 
     def choose(self) -> Action | None:
@@ -78,7 +78,7 @@ def choose_mailbox(jmap: JMAPClient) -> str | None:
         return mailboxes[index]["id"]
 
 
-def _make_url(id_, thread_id):
+def _make_url(id_: str, thread_id: str) -> str:
     return f"https://www.fastmail.com/mail/Inbox/{thread_id}.{id_}"
 
 
@@ -87,7 +87,7 @@ def _display_email(email):
         return color(text, fg=242)
 
     from_ = f"{email['from'][0]['name']} <{email['from'][0]['email']}>"
-    email_url = _make_url(id=email["id"], thread_id=email["threadId"])
+    email_url = _make_url(id_=email["id"], thread_id=email["threadId"])
 
     print(_grey("Received: " + email["receivedAt"]))
     print(_grey("From:     ") + from_)
@@ -154,7 +154,7 @@ def _find_mailbox(mailboxes, name):
     return mailbox
 
 
-def run():
+def run() -> None:
     jmap = JMAPClient(hostname=SETTINGS.jmap.hostname, token=SETTINGS.jmap.token)
     mailboxes = jmap.get_mailboxes()
     inbox_id = _find_mailbox(mailboxes, "Inbox")

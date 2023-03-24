@@ -1,19 +1,9 @@
 import caldav
-from requests.auth import AuthBase
-
-
-class OAuth(AuthBase):
-    def __init__(self, credentials):
-        self.credentials = credentials
-
-    def __call__(self, r):
-        self.credentials.apply(r.headers)
-        return r
 
 
 class Calendariser:
     def __init__(self, url: str, username: str, password: str):
-        client = caldav.DAVClient(url=url, auth=OAuth((username, password)))
+        client = caldav.DAVClient(url=url, username=username, password=password)
 
         principal = client.principal()
         calendars = principal.calendars()
@@ -22,5 +12,5 @@ class Calendariser:
             for c in calendars:
                 print("    Name: %-20s  URL: %s" % (c.name, c.url))
 
-    def add_to_calendar(self):
+    def add_to_calendar(self) -> None:
         pass
