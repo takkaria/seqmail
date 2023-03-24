@@ -5,7 +5,12 @@ from typing import Any
 import requests
 import typedload
 
-Mailbox = dict[str, Any]
+
+@dataclasses.dataclass
+class Mailbox:
+    id: str
+    name: str
+    parent_id: str = dataclasses.field(metadata={"name": "parentId"})
 
 
 @dataclasses.dataclass
@@ -52,7 +57,7 @@ class JMAPClient:
         self.session = None
         self.api_url = None
         self.account_id = None
-        self.mailboxes = None
+        self.mailboxes: list[Mailbox] | None = None
 
     def get_session(self):
         """Return the JMAP Session Resource as a Python dict"""
@@ -117,7 +122,9 @@ class JMAPClient:
             }
         )
 
-        self.mailboxes = response["methodResponses"][0][1]["list"]
+        self.mailboxes = typedload.load(
+            response["methodResponses"][0][1]["list"], list[Mailbox]
+        )
         return self.mailboxes
 
     def move_message(self, email_id: str, folder_id: str) -> None:

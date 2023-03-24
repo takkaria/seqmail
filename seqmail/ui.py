@@ -54,7 +54,7 @@ def _display_name(mailbox: jmap.Mailbox) -> str:
         "Receipts": "r",
         "Make filter": "f",
     }
-    name = mailbox["name"]
+    name = mailbox.name
     if name in shortcuts:
         return f"[{shortcuts[name]}] {name}"
     else:
@@ -70,8 +70,8 @@ def _choose_mailbox(client: jmap.JMAPClient) -> str | None:
     if index is None:
         return None
     else:
-        print(mailboxes[index]["name"])
-        return mailboxes[index]["id"]
+        print(mailboxes[index].name)
+        return mailboxes[index].id
 
 
 def _make_url(id_: str, thread_id: str) -> str:
@@ -126,6 +126,9 @@ class File:
 
 class Unsubscribe:
     def run(self, _jmap_client: jmap.JMAPClient, email: jmap.Email) -> None:
+        if not email.unsubscribe_urls:
+            raise ValueError("Unsubscribe action called but no links to follow")
+
         found_url = None
         for url in email.unsubscribe_urls:
             if url.startswith("https://"):
@@ -178,7 +181,7 @@ def _process_action(jmap: jmap.JMAPClient, email: jmap.Email, action: Action) ->
 
 
 def _find_mailbox_id(mailboxes: list[jmap.Mailbox], name: str) -> str:
-    mailbox_id = [m for m in mailboxes if m["name"] == name][0]["id"]
+    mailbox_id = [m for m in mailboxes if m.name == name][0].id
     return mailbox_id
 
 
