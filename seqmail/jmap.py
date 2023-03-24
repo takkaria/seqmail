@@ -1,12 +1,51 @@
+import dataclasses
 import json
+from typing import Any
 
 import requests
+import typedload
+
+Mailbox = dict[str, Any]
+
+
+@dataclasses.dataclass
+class Attachment:
+    blob_id: str = dataclasses.field(metadata={"name": "blobId"})
+    charset: str
+    cid: str
+    disposition: str
+    language: str
+    location: str
+    name: str
+    part_id: str = dataclasses.field(metadata={"name": "partId"})
+    size: int
+    type: str
+
+
+@dataclasses.dataclass
+class From:
+    email: str
+    name: str
+
+
+@dataclasses.dataclass
+class Email:
+    attachments: list[Attachment]
+    addr_from: list[From] = dataclasses.field(metadata={"name": "from"})
+    unsubscribe_urls: list[str] | None = dataclasses.field(
+        metadata={"name": "header:List-Unsubscribe:asURLs"}
+    )
+    id: str
+    preview: str
+    received_at: str = dataclasses.field(metadata={"name": "receivedAt"})
+    subject: str
+    thread_id: str = dataclasses.field(metadata={"name": "threadId"})
 
 
 class JMAPClient:
     """The tiniest JMAP client you can imagine."""
 
-    def __init__(self, hostname, token):
+    def __init__(self, hostname: str, token: str) -> None:
         """Initialize using a hostname, username and password"""
         self.hostname = hostname
         self.token = token
@@ -26,9 +65,9 @@ class JMAPClient:
             timeout=5,
         )
         r.raise_for_status()
-        self.session = session = r.json()
-        self.api_url = session["apiUrl"]
-        return session
+        self.session = r.json()
+        self.api_url = self.session["apiUrl"]
+        return self.session
 
     def get_account_id(self) -> str:
         """Return the accountId for the account matching self.username"""
@@ -41,7 +80,7 @@ class JMAPClient:
         self.account_id = account_id
         return account_id
 
-    def call(self, call):
+    def call(self, call) -> Any:
         if not self.api_url:
             raise ValueError("No session defined")
 
@@ -59,7 +98,7 @@ class JMAPClient:
         res.raise_for_status()
         return res.json()
 
-    def get_mailboxes(self):
+    def get_mailboxes(self) -> list[Mailbox]:
         if self.mailboxes:
             return self.mailboxes
 
@@ -81,7 +120,7 @@ class JMAPClient:
         self.mailboxes = response["methodResponses"][0][1]["list"]
         return self.mailboxes
 
-    def move_message(self, email_id: str, folder_id: str):
+    def move_message(self, email_id: str, folder_id: str) -> None:
         response = self.call(
             {
                 "using": ["urn:ietf:params:jmap:core", "urn:ietf:params:jmap:mail"],
@@ -104,8 +143,8 @@ class JMAPClient:
         if response["methodResponses"][0][0] == "error":
             raise ValueError("Couldn't move message")
 
-    def get_emails(self, mailbox_id):
-        return self.call(
+    def get_emails(self, mailbox_id: str) -> list[Email]:
+        result = self.call(
             {
                 "using": ["urn:ietf:params:jmap:core", "urn:ietf:params:jmap:mail"],
                 "methodCalls": [
@@ -142,3 +181,5 @@ class JMAPClient:
                 ],
             }
         )
+
+        return typedload.load(result["methodResponses"][1][1]["list"], list[Email])
